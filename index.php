@@ -35,4 +35,4 @@ while (True) {
         echo ' (для продолжения нажмите Enter)' . PHP_EOL;
         readline();
     }
-}п
+}

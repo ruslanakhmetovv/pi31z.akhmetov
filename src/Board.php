@@ -4,6 +4,9 @@ require_once('IFigure.php');
 require_once('Pawn.php');
 require_once('Rook.php');
 require_once('Knight.php');
+require_once('Bishop.php');
+require_once('King.php');
+require_once('Queen.php');
 
 class Board {
     private Color $player = Color::White;
@@ -51,7 +54,27 @@ class Board {
                     )
                 );
             }
+            foreach ([2, 5] as $col) {
+                $this->setItem(
+                    $row,
+                    $col,
+                    new Bishop(
+                        $row === 0 ? Color::White : Color::Black
+                    )
+                );
+            }
+            if ($row == 7) {
+                $this->setItem($row, 3, new Queen(Color::Black));
+                $this->setItem($row, 4, new King(Color::Black));
+            } else {
+                $this->setItem($row, 4, new Queen(Color::White));
+                $this->setItem($row, 3, new King(Color::White));
+            }
         }
+        $this->setItem(3, 2, $this->getItem(7, 0));
+        $this->setItem(7, 0, null);
+        $this->setItem(2, 4, $this->getItem(6, 4));
+        $this->setItem(6, 4, null);
     }
 
     public function getItem(int $row, int $col): IFigure | null {
@@ -138,6 +161,52 @@ class Board {
         }
         $this->setItem($from_row, $from_col, null);
         $this->setItem($to_row, $to_col, $item);
+        if ($this->isCheck($this->player)) {
+            $this->setItem($from_row, $from_col, $item);
+            $this->setItem($to_row, $to_col, $opponent);
+            throw new Exception('Король будет шах!');
+        }
         $this->changePlayer();
+        if ($this->isCheck($this->player)) {
+            $message = 'Внимание! Шах королю ';
+            if ($this->getPlayer() == Color::White) {
+                $message .= 'белых';
+            } else {
+                $message .= 'черных';
+            }
+            throw new Exception($message);
+        }
+    }
+
+    protected function isCheck(Color $color) {
+        $from_row = null;
+        $from_col = null;
+        foreach ($this->board as $row => $line) {
+            foreach ($line as $col => $value) {
+                if ($value instanceof King && $value->getColor() == $color) {
+                    $from_row = $row;
+                    $from_col = $col;
+                    break;
+                }
+            }
+            if ($from_col !== null) {
+                break;
+            }
+        }
+        if ($from_col === null) {
+            return false;
+        }
+        foreach ($this->board as $row => $line) {
+            foreach ($line as $col => $value) {
+                if (!$value || $value->getColor() == $color) {
+                    continue;
+                }
+                if ($value->canAttack($row, $col, $from_row, $from_col, $this)) {
+                    return true;
+                }
+            }
+            
+        }
+        return false;
     }
 }
