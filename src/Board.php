@@ -14,14 +14,14 @@ class Board {
     private array $board = [];
 
     public function __construct() {
-        for ($i = 0; $i < 8; $i += 1) {
+        for ($i = 0; $i < 8; $i ++) {
             $this->board[] = [];
-            for ($j = 0; $j < 8; $j += 1) {
+            for ($j = 0; $j < 8; $j ++) {
                 $this->board[$i][] = null;
             }
         }
-        foreach ([6, 1] as $row) {
-            for ($col = 0; $col < 8; $col += 1) {
+        foreach ([1, 6] as $row) {
+            for ($col = 0; $col < 8; $col ++) {
                 try {
                     $this->setItem(
                         $row,
@@ -35,7 +35,7 @@ class Board {
                 }
             }
         }
-        foreach ([7, 0] as $row) {
+        foreach ([0, 7] as $row) {
             foreach ([0, 7] as $col) {
                 $this->setItem(
                     $row,
@@ -71,10 +71,6 @@ class Board {
                 $this->setItem($row, 3, new King(Color::White));
             }
         }
-        $this->setItem(3, 2, $this->getItem(7, 0));
-        $this->setItem(7, 0, null);
-        $this->setItem(2, 4, $this->getItem(6, 4));
-        $this->setItem(6, 4, null);
     }
 
     public function getItem(int $row, int $col): IFigure | null {
