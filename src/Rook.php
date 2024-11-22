@@ -27,5 +27,7 @@ class Rook extends Figure {
             $start_row += $step_row;
         }
         return true;
+ 
     }
+    
 }
