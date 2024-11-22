@@ -11,4 +11,6 @@ class Knight extends Figure {
         return $diff_row == 2 && $diff_col == 1 || $diff_row == 1 && $diff_col == 2;
     }
 
+
+    
 }
